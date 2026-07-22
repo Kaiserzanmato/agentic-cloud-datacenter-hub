@@ -27,6 +27,9 @@ const COUNTRY_REGISTRY = [
   { id: 'AUS', name: 'Australia', region: 'Oceania', sovereignAiStatus: 'Active Strategy', dataCenterCapacityMW: 1620, gridReadinessScore: 89, activeProjectsCount: 29, enabled: true },
 ];
 
+const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
+const DEEPSEEK_MODEL = 'deepseek-v4-flash';
+const DATA_VERSION = 'country-registry-2026-07-22';
 const MAX_QUESTION_LENGTH = 1200;
 const VALID_TABS = new Set([
   'dashboard',
@@ -34,6 +37,7 @@ const VALID_TABS = new Set([
   'map',
   'countries',
   'projects',
+  'tech',
   'power',
   'audit',
   'export',
@@ -98,7 +102,7 @@ function selectCountries(region) {
   );
 }
 
-function buildAnswer({ question, tab, region }) {
+function getRegistrySnapshot(region) {
   const scopedCountries = selectCountries(region);
   const countries = scopedCountries.length > 0 ? scopedCountries : COUNTRY_REGISTRY.filter((country) => country.enabled);
   const ranked = [...countries]
@@ -108,14 +112,24 @@ function buildAnswer({ question, tab, region }) {
       return b.activeProjectsCount - a.activeProjectsCount;
     })
     .slice(0, 5);
-
   const constrained = countries
     .filter((country) => country.gridReadinessScore < 75 || country.sovereignAiStatus === 'Constrained')
     .sort((a, b) => a.gridReadinessScore - b.gridReadinessScore)
     .slice(0, 4);
-
   const totalCapacity = countries.reduce((sum, country) => sum + country.dataCenterCapacityMW, 0);
   const totalProjects = countries.reduce((sum, country) => sum + country.activeProjectsCount, 0);
+
+  return {
+    countries,
+    ranked,
+    constrained,
+    totalCapacity,
+    totalProjects,
+  };
+}
+
+function buildDeterministicAnswer({ question, tab, region }) {
+  const { countries, ranked, constrained, totalCapacity, totalProjects } = getRegistrySnapshot(region);
   const topList = ranked
     .map(
       (country, index) =>
@@ -137,24 +151,151 @@ function buildAnswer({ question, tab, region }) {
       `Priority watchlist:\n${topList}\n\n` +
       `Infrastructure and policy pressure points:\n${riskList}\n\n` +
       `Interpretation for the question "${question}": prioritize the highest-capacity hubs for investment monitoring, then cross-check constrained or lower-grid-readiness countries before making deployment, sourcing, or policy decisions. Treat this as platform intelligence, not external live research.`,
-    citations: [
-      {
-        title: 'ISO country registry and data-center readiness dataset',
-        source: 'src/data/countryRegistry.ts',
-      },
-      {
-        title: 'AI research dashboard context',
-        source: 'dashboard tab context and selected region filter',
-      },
-    ],
-    context: {
-      tab,
-      region,
-      countryCount: countries.length,
-      totalCapacityMW: totalCapacity,
-      activeProjectsCount: totalProjects,
-    },
+    citations: getCitations(),
+    context: getContext({ tab, region, countries, totalCapacity, totalProjects, model: 'registry-fallback' }),
   };
+}
+
+function getCitations() {
+  return [
+    {
+      title: 'ISO country registry and data-center readiness dataset',
+      source: 'src/data/countryRegistry.ts',
+    },
+    {
+      title: 'AI research dashboard context',
+      source: 'dashboard tab context and selected region filter',
+    },
+  ];
+}
+
+function getContext({ tab, region, countries, totalCapacity, totalProjects, model }) {
+  return {
+    tab,
+    region,
+    model,
+    dataVersion: DATA_VERSION,
+    countryCount: countries.length,
+    totalCapacityMW: totalCapacity,
+    activeProjectsCount: totalProjects,
+  };
+}
+
+function parseModelJson(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    try {
+      return JSON.parse(match[0]);
+    } catch {
+      return null;
+    }
+  }
+}
+
+function validateModelPayload(payload) {
+  if (!payload || typeof payload.answer !== 'string') {
+    return null;
+  }
+
+  return {
+    answer: payload.answer.slice(0, 5000),
+    citations: Array.isArray(payload.citations)
+      ? payload.citations
+          .filter(
+            (citation) =>
+              citation &&
+              typeof citation.title === 'string' &&
+              typeof citation.source === 'string',
+          )
+          .slice(0, 5)
+      : getCitations(),
+  };
+}
+
+async function callDeepSeek({ question, tab, region }) {
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+
+  const { countries, ranked, constrained, totalCapacity, totalProjects } = getRegistrySnapshot(region);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 18_000);
+
+  try {
+    const response = await fetch(DEEPSEEK_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        temperature: 0.2,
+        max_tokens: 900,
+        response_format: { type: 'json_object' },
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are the Aethel Global AI Research Agent. Use only the supplied registry context. Do not invent live external facts. Return strict JSON with keys answer and citations. citations must be an array of {title, source}.',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify({
+              question,
+              tab,
+              region,
+              modelAlignment: DEEPSEEK_MODEL,
+              dataVersion: DATA_VERSION,
+              registrySummary: {
+                countryCount: countries.length,
+                totalCapacityMW: totalCapacity,
+                activeProjectsCount: totalProjects,
+                topCapacityCountries: ranked,
+                constrainedCountries: constrained,
+              },
+            }),
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const completion = await response.json();
+    const content = completion?.choices?.[0]?.message?.content;
+    if (typeof content !== 'string') {
+      return null;
+    }
+
+    const parsedPayload = validateModelPayload(parseModelJson(content));
+    if (!parsedPayload) {
+      return null;
+    }
+
+    return {
+      ...parsedPayload,
+      context: getContext({
+        tab,
+        region,
+        countries,
+        totalCapacity,
+        totalProjects,
+        model: DEEPSEEK_MODEL,
+      }),
+    };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export default async function handler(request, response) {
@@ -178,7 +319,8 @@ export default async function handler(request, response) {
       return;
     }
 
-    sendJson(response, 200, buildAnswer(payload));
+    const modelAnswer = await callDeepSeek(payload);
+    sendJson(response, 200, modelAnswer ?? buildDeterministicAnswer(payload));
   } catch (error) {
     sendJson(response, 500, {
       error: 'AI research request failed.',
