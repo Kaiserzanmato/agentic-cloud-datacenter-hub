@@ -1,0 +1,183 @@
+export interface GlobalProjectItem {
+  id: string;
+  region: string;
+  country: string;
+  location: string;
+  projectName: string;
+  organizations: string[];
+  category: 'AI Supercomputer' | 'Cloud Region' | 'Semiconductor Fab' | 'SMR Nuclear' | 'Subsea Cable' | 'Sovereign AI Cluster' | 'Colocation DC';
+  announcedDate: string;
+  status: 'Operational' | 'Under Construction' | 'Announced' | 'Delayed' | 'Cancelled';
+  expectedCompletion: string;
+  investmentValue: string;
+  capacity: string;
+  jobsEstimate: string;
+  energyAndCooling: string;
+  keyBenefits: string[];
+  keyRisks: string[];
+  sources: string[];
+  confidence: 'High' | 'Medium' | 'Low';
+}
+
+export const GLOBAL_PROJECTS_REGISTRY: GlobalProjectItem[] = [
+  {
+    id: 'proj-001',
+    region: 'North America',
+    country: 'United States',
+    location: 'Constellation Crane Clean Energy Center, PA',
+    projectName: 'Three Mile Island SMR Power Purchase Agreement',
+    organizations: ['Microsoft', 'Constellation Energy'],
+    category: 'SMR Nuclear',
+    announcedDate: '2024-09-20',
+    status: 'Under Construction',
+    expectedCompletion: '2028-Q1',
+    investmentValue: '$1.6B',
+    capacity: '835 MW',
+    jobsEstimate: '3,400 direct & indirect jobs',
+    energyAndCooling: 'Zero-carbon nuclear generation; direct river cooling system',
+    keyBenefits: ['100% clean baseload power for Microsoft AI data centers', 'Grid decarbonization without fossil peaking'],
+    keyRisks: ['NRC regulatory approval timeline', 'Transmission line interconnection congestion'],
+    sources: ['Constellation Official Press Release (2024)', 'Reuters Energy Report'],
+    confidence: 'High'
+  },
+  {
+    id: 'proj-002',
+    region: 'Southeast Asia',
+    country: 'Philippines',
+    location: 'Clark Freeport Zone, Pampanga / Cavite Hub',
+    projectName: 'Philippine Sovereign Cloud & Hyperscale Data Center Campus',
+    organizations: ['DICT Philippines', 'ST Telemedia Global Data Centres', 'Globe Telecom'],
+    category: 'Sovereign AI Cluster',
+    announcedDate: '2025-03-12',
+    status: 'Under Construction',
+    expectedCompletion: '2026-Q4',
+    investmentValue: '$1.2B',
+    capacity: '124 MW',
+    jobsEstimate: '2,100 high-tech jobs',
+    energyAndCooling: 'Direct-to-chip liquid cooling; 30% solar micro-grid integration',
+    keyBenefits: ['Data sovereignty compliance for PH government & financial sector', 'Sub-10ms latency across ASEAN'],
+    keyRisks: ['Typhoon resilience requirements', 'High electricity tariff structure in Luzon'],
+    sources: ['DICT Official Blueprint (2026)', 'STT GDC Press Filing'],
+    confidence: 'High'
+  },
+  {
+    id: 'proj-003',
+    region: 'East Asia',
+    country: 'Japan',
+    location: 'Chitose, Hokkaido',
+    projectName: 'Rapidus 2nm Next-Gen Semiconductor Foundry',
+    organizations: ['Rapidus Corp', 'IBM', 'Imec', 'METI Japan'],
+    category: 'Semiconductor Fab',
+    announcedDate: '2023-02-28',
+    status: 'Under Construction',
+    expectedCompletion: '2027-Q2',
+    investmentValue: '$33.0B',
+    capacity: '30,000 300mm wafers/month (2nm GAAFET)',
+    jobsEstimate: '4,500 semiconductor engineers',
+    energyAndCooling: 'Sub-zero liquid cooling; geothermal power hybrid',
+    keyBenefits: ['Domestic Japanese advanced chip manufacturing', 'Decentralized supply chain away from East Asia bottlenecks'],
+    keyRisks: ['Yield ramp rates for 2nm gate-all-around process', 'Geothermal power scaling speed'],
+    sources: ['METI Japan Official Announcement', 'Nikkei Asia Tech Audit'],
+    confidence: 'High'
+  },
+  {
+    id: 'proj-004',
+    region: 'Southeast Asia',
+    country: 'Malaysia',
+    location: 'Johor Bahru Data Center Park',
+    projectName: 'YTL Green AI Data Center Park & NVIDIA GB200 Supercluster',
+    organizations: ['YTL Power', 'NVIDIA'],
+    category: 'AI Supercomputer',
+    announcedDate: '2023-12-08',
+    status: 'Operational',
+    expectedCompletion: '2025-Q3 (Phase 1)',
+    investmentValue: '$4.3B',
+    capacity: '500 MW (Phase 1: 100 MW operational)',
+    jobsEstimate: '1,800 tech roles',
+    energyAndCooling: 'Co-located 500MW Solar Farm; Closed-loop immersion cooling',
+    keyBenefits: ['Largest AI supercomputer in Southeast Asia', 'Renewable solar power PPA'],
+    keyRisks: ['Water consumption for cooling towers', 'Grid bottleneck into Singapore cross-border interconnector'],
+    sources: ['NVIDIA Developer Hub (2025)', 'YTL Corporation Annual Filing'],
+    confidence: 'High'
+  },
+  {
+    id: 'proj-005',
+    region: 'Middle East',
+    country: 'United Arab Emirates',
+    location: 'Abu Dhabi AI City',
+    projectName: 'MGX - Stargate Global AI Supercluster',
+    organizations: ['MGX', 'Microsoft', 'OpenAI', 'G42'],
+    category: 'AI Supercomputer',
+    announcedDate: '2024-09-17',
+    status: 'Announced',
+    expectedCompletion: '2027-Q4',
+    investmentValue: '$100.0B',
+    capacity: '5 GW planned capacity (100,000+ GPU cluster)',
+    jobsEstimate: '6,000 global AI researchers',
+    energyAndCooling: 'Solar PV + Nuclear (Barakah) hybrid; Liquid submersion cooling',
+    keyBenefits: ['Middle East global AI computing nexus', 'Direct sovereign wealth backing'],
+    keyRisks: ['US export license authorizations for advanced GPUs', 'Extreme ambient heat cooling efficiency loss'],
+    sources: ['Bloomberg Terminal Reports', 'Microsoft Press Room'],
+    confidence: 'Medium'
+  },
+  {
+    id: 'proj-006',
+    region: 'Europe',
+    country: 'Germany',
+    location: 'Frankfurt Rhein-Main Data Hub',
+    projectName: 'Main-Taunus Hyperscale Cloud & Sovereign AI Campus',
+    organizations: ['AWS', 'Digital Realty'],
+    category: 'Cloud Region',
+    announcedDate: '2024-05-15',
+    status: 'Under Construction',
+    expectedCompletion: '2026-Q3',
+    investmentValue: '$8.8B',
+    capacity: '240 MW',
+    jobsEstimate: '1,200 data center operators',
+    energyAndCooling: 'Waste heat recovery to local municipal district heating network',
+    keyBenefits: ['EU Data Boundary compliance', 'Green district heating for 15,000 homes'],
+    keyRisks: ['Frankfurt municipal grid power cap restrictions', 'Strict noise & land-use regulations'],
+    sources: ['AWS Global Infrastructure Updates', 'Frankfurt City Council Filings'],
+    confidence: 'High'
+  },
+  {
+    id: 'proj-007',
+    region: 'Southeast Asia',
+    country: 'Singapore',
+    location: 'Jurong Island / Tuas Data Center Zone',
+    projectName: 'Green Data Center Floating Modular Platform',
+    organizations: ['Keppel Data Centres', 'Singtel', 'EDB Singapore'],
+    category: 'Colocation DC',
+    announcedDate: '2024-11-10',
+    status: 'Under Construction',
+    expectedCompletion: '2026-Q2',
+    investmentValue: '$750M',
+    capacity: '80 MW',
+    jobsEstimate: '650 specialist engineers',
+    energyAndCooling: 'Seawater heat-exchange cooling; LNG cold energy recovery system',
+    keyBenefits: ['Zero land-footprint expansion', 'Ultra-low PUE of 1.15 in tropical climate'],
+    keyRisks: ['Maritime corrosion management', 'Severe sea level rise / wave surge isolation'],
+    sources: ['Keppel Infrastructure Brief', 'EDB Singapore Tech Review'],
+    confidence: 'High'
+  },
+  {
+    id: 'proj-008',
+    region: 'North America',
+    country: 'United States',
+    location: 'Phoenix & Peoria, Arizona',
+    projectName: 'TSMC Fab 21 Advanced Packaging & 2nm Expansion',
+    organizations: ['TSMC', 'US Dept of Commerce (CHIPS Act)'],
+    category: 'Semiconductor Fab',
+    announcedDate: '2024-04-08',
+    status: 'Under Construction',
+    expectedCompletion: '2028-Q1',
+    investmentValue: '$65.0B',
+    capacity: 'N2 (2nm) & N3 (3nm) advanced node output',
+    jobsEstimate: '6,000 high-wage tech jobs + 20,000 construction jobs',
+    energyAndCooling: 'Ultra-pure water recycling plant (90% reclamation rate)',
+    keyBenefits: ['US domestic advanced AI chip fabrication', 'CHIPS Act $6.6B grant incentive'],
+    keyRisks: ['Local Arizona water rights controversies', 'Skilled workforce availability shortages'],
+    sources: ['US Dept of Commerce CHIPS Office', 'TSMC Corporate Quarterly Report'],
+    confidence: 'High'
+  }
+];
