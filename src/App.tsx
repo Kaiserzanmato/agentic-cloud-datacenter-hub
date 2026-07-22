@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from './hooks/useTheme';
 import { Navbar } from './components/layout/Navbar';
 import { ExecutiveDashboard } from './components/sections/ExecutiveDashboard';
 import { DeepResearchEngine } from './components/sections/DeepResearchEngine';
@@ -14,9 +15,11 @@ export function App() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [selectedRegion, setSelectedRegion] = useState<string>('All Regions');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
+  const { mode: themeMode, setMode: setThemeMode } = useTheme();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 flex flex-col">
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -25,6 +28,8 @@ export function App() {
         setSelectedRegion={setSelectedRegion}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
       />
 
       {/* Main Workspace Container */}
@@ -41,6 +46,8 @@ export function App() {
           <InfrastructureMap
             selectedRegion={selectedRegion}
             searchQuery={searchQuery}
+            selectedCountryId={selectedCountryId}
+            onSelectCountry={setSelectedCountryId}
           />
         )}
 
@@ -48,6 +55,8 @@ export function App() {
           <CountryExplorer
             selectedRegion={selectedRegion}
             searchQuery={searchQuery}
+            selectedCountryId={selectedCountryId}
+            onSelectCountry={setSelectedCountryId}
           />
         )}
 
@@ -55,6 +64,7 @@ export function App() {
           <ProjectRegistrySection
             selectedRegion={selectedRegion}
             searchQuery={searchQuery}
+            onSelectCountry={setSelectedCountryId}
           />
         )}
 

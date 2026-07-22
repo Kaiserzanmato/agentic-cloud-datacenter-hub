@@ -21,14 +21,14 @@ export const PowerCoolingSection: React.FC = () => {
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="pb-4 border-b border-slate-800">
-        <h2 className="text-2xl font-extrabold text-white flex items-center space-x-3">
+      <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
+        <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-3">
           <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
             <Zap className="w-6 h-6" />
           </div>
           <span>Power Grid, Nuclear SMR & Cooling Benchmark</span>
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
           Nuclear PPA agreements, direct-to-chip liquid cooling thresholds, and GPU rack thermal metrics
         </p>
       </div>
@@ -44,14 +44,14 @@ export const PowerCoolingSection: React.FC = () => {
           {nuclearDeals.map((deal, idx) => (
             <GlassCard key={idx} className="p-5 space-y-3 border-l-4 border-l-cyan-500">
               <div className="flex items-center justify-between">
-                <span className="font-extrabold text-white text-base">{deal.company}</span>
+                <span className="font-extrabold text-slate-900 dark:text-white text-base">{deal.company}</span>
                 <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded border border-cyan-500/20">
                   {deal.capacity}
                 </span>
               </div>
-              <div className="space-y-1 text-xs text-slate-300">
-                <p>Provider: <strong className="text-slate-100">{deal.provider}</strong></p>
-                <p>Facility: <span className="text-slate-400">{deal.plant}</span></p>
+              <div className="space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                <p>Provider: <strong className="text-slate-900 dark:text-slate-100">{deal.provider}</strong></p>
+                <p>Facility: <span className="text-slate-600 dark:text-slate-400">{deal.plant}</span></p>
                 <p className="text-emerald-400 font-mono text-[11px] pt-1">Status: {deal.status}</p>
               </div>
             </GlassCard>
@@ -66,11 +66,11 @@ export const PowerCoolingSection: React.FC = () => {
           <span>AI Accelerator Hardware & Rack Thermal Dissipation Specs</span>
         </h3>
 
-        <GlassCard className="p-0 overflow-hidden border-slate-800">
+        <GlassCard className="p-0 overflow-hidden border-slate-200 dark:border-slate-800">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono">
+                <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-mono">
                   <th className="py-3 px-4">Accelerator Model</th>
                   <th className="py-3 px-4">Architecture</th>
                   <th className="py-3 px-4">Power Per Rack</th>
@@ -79,18 +79,18 @@ export const PowerCoolingSection: React.FC = () => {
                   <th className="py-3 px-4">Peak Performance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-200">
+              <tbody className="divide-y divide-slate-200/60 dark:divide-slate-800/60 text-slate-800 dark:text-slate-200">
                 {gpuSpecs.map((gpu, i) => (
                   <tr key={i} className="hover:bg-slate-900/60 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-white">{gpu.name}</td>
-                    <td className="py-3.5 px-4 text-slate-400 font-mono">{gpu.architecture}</td>
+                    <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">{gpu.name}</td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 font-mono">{gpu.architecture}</td>
                     <td className="py-3.5 px-4 font-mono font-bold text-cyan-400">{gpu.powerPerRack}</td>
                     <td className="py-3.5 px-4">
                       <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 border border-blue-500/20 text-[11px]">
                         {gpu.coolingRequired}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-300">{gpu.memory}</td>
+                    <td className="py-3.5 px-4 font-mono text-slate-700 dark:text-slate-300">{gpu.memory}</td>
                     <td className="py-3.5 px-4 font-mono text-emerald-400 font-bold">{gpu.fp4Flops || gpu.fp8Flops || gpu.int8Flops}</td>
                   </tr>
                 ))}

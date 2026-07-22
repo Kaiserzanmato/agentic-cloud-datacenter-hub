@@ -14,11 +14,15 @@ import { CountryModal } from '../ui/CountryModal';
 interface CountryExplorerProps {
   selectedRegion: string;
   searchQuery: string;
+  selectedCountryId?: string | null;
+  onSelectCountry?: (id: string) => void;
 }
 
 export const CountryExplorer: React.FC<CountryExplorerProps> = ({
   selectedRegion,
-  searchQuery: externalSearchQuery
+  searchQuery: externalSearchQuery,
+  selectedCountryId,
+  onSelectCountry
 }) => {
   const [internalQuery, setInternalQuery] = useState('');
   const [regionFilter, setRegionFilter] = useState('All');
@@ -68,15 +72,15 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-2xl font-extrabold text-white flex items-center space-x-3">
+          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-3">
             <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
               <Globe className="w-6 h-6" />
             </div>
             <span>Global 249 Country & Territory Explorer</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             ISO 3166-1 mapped country registry with sovereign AI posture, data center MW capacity, and power grid stability scores
           </p>
         </div>
@@ -100,15 +104,15 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {comparedCountries.map((c) => (
-              <div key={c.id} className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+              <div key={c.id} className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-extrabold text-white text-base">{c.name}</span>
+                  <span className="font-extrabold text-slate-900 dark:text-white text-base">{c.name}</span>
                   <span className="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400">
                     {c.alpha3}
                   </span>
                 </div>
-                <div className="space-y-1.5 text-xs text-slate-300 font-mono">
-                  <p>Region: <span className="text-slate-100">{c.region}</span></p>
+                <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 font-mono">
+                  <p>Region: <span className="text-slate-900 dark:text-slate-100">{c.region}</span></p>
                   <p>DC Capacity: <span className="text-cyan-400 font-bold">{c.dataCenterCapacityMW} MW</span></p>
                   <p>Grid Score: <span className="text-emerald-400 font-bold">{c.gridReadinessScore}/100</span></p>
                   <p>Sovereign AI: <span className="text-blue-300">{c.sovereignAiStatus}</span></p>
@@ -123,24 +127,24 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
       <GlassCard className="p-4 flex flex-wrap items-center justify-between gap-4">
         {/* Search Input */}
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400" />
           <input
             type="text"
             placeholder="Search by country name, ISO code (US, PHL, DEU)..."
             value={internalQuery}
             onChange={(e) => setInternalQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300/80 dark:border-slate-700/80 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           />
         </div>
 
         {/* Region Filter */}
         <div className="flex items-center space-x-2">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <Filter className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
           <select
             value={regionFilter}
             onChange={(e) => setRegionFilter(e.target.value)}
             aria-label="Filter by region category"
-            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+            className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
           >
             <option value="All">All Regions</option>
             <option value="North America">North America</option>
@@ -161,7 +165,7 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             aria-label="Filter by sovereign AI posture"
-            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+            className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
           >
             <option value="All">All Sovereign Stances</option>
             <option value="Active Strategy">Active Strategy</option>
@@ -176,16 +180,22 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredCountries.map((c) => {
           const isComparing = compareList.includes(c.id);
+          const isFocused = selectedCountryId === c.id;
           return (
             <GlassCard
               key={c.id}
-              onClick={() => setSelectedCountry(c)}
-              className="p-5 hover:border-cyan-500/60 transition-all cursor-pointer space-y-4 group relative"
+              onClick={() => {
+                setSelectedCountry(c);
+                onSelectCountry?.(c.id);
+              }}
+              className={`p-5 hover:border-cyan-500/60 transition-all cursor-pointer space-y-4 group relative ${
+                isFocused ? 'ring-2 ring-cyan-500/70 border-cyan-500/60' : ''
+              }`}
             >
               {/* Compare toggle button */}
               <button
                 onClick={(e) => toggleCompare(c.id, e)}
-                className="absolute top-4 right-4 text-slate-500 hover:text-cyan-400 cursor-pointer"
+                className="absolute top-4 right-4 text-slate-500 dark:text-slate-500 hover:text-cyan-400 cursor-pointer"
                 title="Select to compare"
               >
                 {isComparing ? (
@@ -196,24 +206,24 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
               </button>
 
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-mono font-bold text-cyan-400 text-sm border border-slate-700 group-hover:border-cyan-500">
+                <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center font-mono font-bold text-cyan-400 text-sm border border-slate-300 dark:border-slate-700 group-hover:border-cyan-500">
                   {c.alpha2}
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-100 text-sm group-hover:text-cyan-300 transition-colors">
+                  <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm group-hover:text-cyan-300 transition-colors">
                     {c.name}
                   </h3>
-                  <span className="text-[10px] font-mono text-slate-400 block">{c.region}</span>
+                  <span className="text-[10px] font-mono text-slate-600 dark:text-slate-400 block">{c.region}</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-[11px] font-mono pt-2 border-t border-slate-800/60">
+              <div className="grid grid-cols-2 gap-2 text-[11px] font-mono pt-2 border-t border-slate-200/60 dark:border-slate-800/60">
                 <div>
-                  <span className="text-slate-500 block">DC Capacity</span>
-                  <span className="text-white font-bold">{c.dataCenterCapacityMW} MW</span>
+                  <span className="text-slate-500 dark:text-slate-500 block">DC Capacity</span>
+                  <span className="text-slate-900 dark:text-white font-bold">{c.dataCenterCapacityMW} MW</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block">Grid Readiness</span>
+                  <span className="text-slate-500 dark:text-slate-500 block">Grid Readiness</span>
                   <span className="text-emerald-400 font-bold">{c.gridReadinessScore}/100</span>
                 </div>
               </div>
@@ -222,7 +232,7 @@ export const CountryExplorer: React.FC<CountryExplorerProps> = ({
                 <span className="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                   {c.sovereignAiStatus}
                 </span>
-                <span className="text-slate-400">{c.activeProjectsCount} Hubs</span>
+                <span className="text-slate-600 dark:text-slate-400">{c.activeProjectsCount} Hubs</span>
               </div>
             </GlassCard>
           );

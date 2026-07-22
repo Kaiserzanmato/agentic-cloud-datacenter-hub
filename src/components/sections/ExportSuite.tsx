@@ -39,14 +39,14 @@ export const ExportSuite: React.FC = () => {
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="pb-4 border-b border-slate-800">
-        <h2 className="text-2xl font-extrabold text-white flex items-center space-x-3">
+      <div className="pb-4 border-b border-slate-200 dark:border-slate-800">
+        <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-3">
           <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
             <Download className="w-6 h-6" />
           </div>
           <span>Export & Intelligence Suite</span>
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
           Download structured JSON/CSV datasets, full markdown research prompts, and intelligence briefings
         </p>
       </div>
@@ -57,8 +57,8 @@ export const ExportSuite: React.FC = () => {
           <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400 w-fit">
             <Database className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-white">Full Platform Dataset (JSON)</h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Full Platform Dataset (JSON)</h3>
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             Includes all 249 ISO country records, 17-column global project registries, SMR nuclear power deals, and thermal cooling benchmarks.
           </p>
           <button
@@ -75,13 +75,13 @@ export const ExportSuite: React.FC = () => {
           <div className="p-3 rounded-xl bg-blue-500/10 text-blue-400 w-fit">
             <Code className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-white">Deep Research System Prompt (.md)</h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Deep Research System Prompt (.md)</h3>
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             Copy or download the complete 12-section research prompt specification for use with Gemini Flash, Claude Sonnet, or GPT models.
           </p>
           <button
             onClick={handleCopyPrompt}
-            className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
+            className="w-full py-3 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-all flex items-center justify-center space-x-2 cursor-pointer"
           >
             {copiedPrompt ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-cyan-400" />}
             <span>{copiedPrompt ? 'Copied Prompt to Clipboard!' : 'Copy Deep Research Prompt'}</span>

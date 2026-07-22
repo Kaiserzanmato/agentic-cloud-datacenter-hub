@@ -20,7 +20,7 @@ export function GlassCard({ children, className, delay = 0, hover = true, onClic
       whileHover={hover ? { y: -4 } : undefined}
       onClick={onClick}
       className={cn(
-        'rounded-2xl bg-slate-900/70 backdrop-blur-xl border border-slate-800 shadow-xl',
+        'rounded-2xl bg-slate-100/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-xl',
         'transition-colors duration-300',
         className
       )}

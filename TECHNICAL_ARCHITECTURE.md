@@ -122,6 +122,17 @@ Because there is no persistence layer, any user interaction (filters, searches, 
 - **Responsiveness:** Tailwind responsive utility classes (`sm:`, `lg:`) throughout; grid/card layouts reflow for mobile.
 - **Accessibility considerations:** Semantic headings via `SectionHeader`, icon+label pairing (`lucide-react`) rather than icon-only controls, `selection:` theme styling defined at the app root.
 
+### 6.1 Theme System (Light / Dark / System)
+
+The app now ships a real three-way theme switcher rather than a fixed dark palette:
+
+- **`src/hooks/useTheme.ts`** — reads/writes a `aethel-theme` localStorage key (`'light' | 'dark' | 'system'`), resolves `'system'` via `matchMedia('(prefers-color-scheme: dark)')` (with a live listener for OS-level changes), and toggles a `.dark` class + `data-theme` attribute on `<html>`.
+- **`src/components/ui/ThemeToggle.tsx`** — a 3-button Sun/Moon/Monitor control in the `Navbar`, wired to the hook via props from `App.tsx`.
+- **`index.html`** contains a small blocking inline script that applies the resolved theme *before* the app mounts, so there is no flash of the wrong theme on load.
+- **Tailwind v4 wiring:** `src/index.css` declares `@custom-variant dark (&:where(.dark, .dark *));` so every `dark:` utility in the codebase is gated by the `.dark` class (set by the hook/script above) rather than the OS media query directly — the `system` option is implemented in JS instead, giving the toggle explicit control.
+- **Regression safeguard:** when no preference is stored, the resolved theme defaults to **`dark`** — the app's original fixed appearance — so existing users see zero visual change until they explicitly pick Light or System.
+- **Coverage:** every component actually rendered by the app (the app shell, `Navbar`, `Footer`, `GlassCard`, `CountryModal`, `ExecutiveDashboard`, `DeepResearchEngine`, `InfrastructureMap`, `CountryExplorer`, `ProjectRegistrySection`, `PowerCoolingSection`, `AuditLogSection`, `ExportSuite`) has paired light/dark Tailwind classes for backgrounds, borders, and text. A handful of unused/orphaned components under `src/components/sections/` (`HeroHeader`, `RegulatorySection`, `SustainabilitySection`, `AgenticSection`, `TrilemmaSection`, `ExecutiveSummary`, `InfrastructureSection`) are not imported anywhere in `App.tsx` and were left as-is — see §12 for a note on this dead code.
+
 ---
 
 ## 7. AI Model Integration
@@ -169,7 +180,26 @@ The platform includes an interactive **Global Map** tab (`src/components/map/Inf
 
 **Failure handling:** a `try/catch` around map construction plus a `map.on('error', ...)` handler sets a `mapFailed` state that swaps the canvas for a plain "tiles unavailable" message, so a tile-host outage degrades gracefully instead of leaving a blank or broken map.
 
-**Not included (future extension):** choropleth country-shape fills (would need a TopoJSON world layer + `react-simple-maps`/`visx`, as in the prior non-spatial approach considered), 3D building/pitch layers, animated pulsing hotspots, or camera fly-to presets — all present in the reference DocypherLabs map implementations reviewed but out of scope for this pass, which focused on a marker-and-overlay map over the existing dataset.
+### 9.1 Cross-Tab Selection Sync
+
+A country/location selection made in one tab now drives the map's overlay state, not just its own local UI:
+
+- `App.tsx` lifts a single `selectedCountryId` / `setSelectedCountryId` pair alongside the existing `selectedRegion`/`searchQuery` state, and passes it to `InfrastructureMap`, `CountryExplorer`, and `ProjectRegistrySection`.
+- **`CountryExplorer`** calls `onSelectCountry(id)` when a country card is clicked (in addition to opening its own modal), and rings the currently-selected card (`ring-2 ring-cyan-500/70`) so the active selection is visible in the grid too.
+- **`ProjectRegistrySection`** resolves each project's free-text `country` field to a registry id via a `COUNTRY_NAME_TO_ID` lookup (built once from `COUNTRY_REGISTRY`) and renders the country name as a clickable button when a match exists, calling `onSelectCountry(id)`.
+- **`InfrastructureMap`** reacts to an externally-changed `selectedCountryId` in a dedicated `useEffect`: it flies the camera to that country's coordinates (`map.flyTo`) and opens its popup, and the marker-rendering effect also depends on `selectedCountryId` so the focused marker gets a highlighted ring/glow regardless of whether the selection came from this component or another tab.
+- The whole flow is wrapped in `try/catch` so a missing coordinate or an in-flight map never throws — selection sync is strictly additive and cannot break the existing per-tab filtering.
+
+### 9.2 3D Immersive View (Open-Source, Same Data)
+
+A **"3D Immersive" / "2D View"** toggle lives next to the overlay-mode buttons. It does not create a second map or a second data source — it re-configures the *same* `maplibregl.Map` instance and the *same* marker set already used by the 2D overlay, which is what keeps the two views permanently in sync (there is no separate state to drift):
+
+- Toggling on calls `map.easeTo({ pitch: 55, bearing: -17 })` and conditionally adds a `fill-extrusion` layer (`3d-buildings`) sourced from the vector tile style's own `openmaptiles` building layer — guarded by `map.getLayer(...)` / `map.getSource(...)` checks so re-toggling never throws a duplicate-layer error.
+- Toggling off eases the camera back to `pitch: 0, bearing: 0` and removes the layer if present.
+- Buildings only render at city-level zoom (`minzoom: 13`); at the default world view the visible effect is the tilted/rotated camera, with a small helper note in the UI explaining this.
+- Everything is wrapped in `try/catch` and defaults to **off** (2D) on first load, so the original map experience is unchanged unless a user opts in — the regression safeguard requested for this feature.
+
+**Not included (future extension):** choropleth country-shape fills (would need a TopoJSON world layer + `react-simple-maps`/`visx`), animated pulsing hotspots, or per-region camera presets — present in the reference DocypherLabs map implementations reviewed but out of scope for this pass.
 
 ---
 
@@ -210,3 +240,4 @@ Two "output" paths exist, both client-side only:
 3. **Map visualization enhancements** — the marker/overlay map is now live (§9); a choropleth country-fill layer (TopoJSON + `react-simple-maps`/`visx`) remains a reasonable follow-up for area-based (rather than point-based) encoding of `sovereignAiStatus`/capacity.
 4. **Routing** — introduce URL-based routing (e.g., React Router) so tabs are deep-linkable and shareable.
 5. **Persistence** — persist user filter/search state and audit log entries beyond a single page session.
+6. **Dead code cleanup** — `HeroHeader.tsx`, `RegulatorySection.tsx`, `SustainabilitySection.tsx`, `AgenticSection.tsx`, `TrilemmaSection.tsx`, `ExecutiveSummary.tsx`, `InfrastructureSection.tsx`, `Badge.tsx`, and `SectionHeader.tsx` are not imported anywhere in `App.tsx` and appear to be leftover scaffolding from an earlier design pass; safe to delete once confirmed unneeded.

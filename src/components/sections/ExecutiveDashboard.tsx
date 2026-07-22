@@ -90,65 +90,65 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <GlassCard className="p-5 border-l-4 border-l-cyan-500">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400">Hyperscaler CapEx</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400">Hyperscaler CapEx</span>
             <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400">
               <TrendingUp className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline space-x-2">
-            <span className="text-3xl font-extrabold text-white">$</span>
-            <AnimatedNumber value={602} className="text-3xl font-extrabold text-white" />
+            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">$</span>
+            <AnimatedNumber value={602} className="text-3xl font-extrabold text-slate-900 dark:text-white" />
             <span className="text-lg font-bold text-cyan-400">B</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400 flex items-center">
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 flex items-center">
             <span className="text-emerald-400 font-semibold mr-1.5">+36% YoY</span> across MSFT, AWS, GOOG, META
           </p>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-blue-500">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400">Global Data Center Power</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400">Global Data Center Power</span>
             <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400">
               <Zap className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline space-x-2">
-            <AnimatedNumber value={61} className="text-3xl font-extrabold text-white" />
+            <AnimatedNumber value={61} className="text-3xl font-extrabold text-slate-900 dark:text-white" />
             <span className="text-lg font-bold text-blue-400">GW</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400 flex items-center">
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 flex items-center">
             <span className="text-cyan-400 font-semibold mr-1.5">60% AI Density</span> projected by 2030
           </p>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-indigo-500">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400">Liquid Cooling Adoption</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400">Liquid Cooling Adoption</span>
             <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400">
               <ThermometerSnowflake className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline space-x-2">
-            <AnimatedNumber value={60} className="text-3xl font-extrabold text-white" />
+            <AnimatedNumber value={60} className="text-3xl font-extrabold text-slate-900 dark:text-white" />
             <span className="text-lg font-bold text-indigo-400">%</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400">
             For &gt;40kW high-density AI rack deployments
           </p>
         </GlassCard>
 
         <GlassCard className="p-5 border-l-4 border-l-emerald-500">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-400">Sovereign Country Registries</span>
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400">Sovereign Country Registries</span>
             <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
               <Globe className="w-5 h-5" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline space-x-2">
-            <AnimatedNumber value={249} className="text-xs font-bold text-white" />
+            <AnimatedNumber value={249} className="text-xs font-bold text-slate-900 dark:text-white" />
             <span className="text-xs font-bold text-emerald-400">ISO Territories</span>
           </div>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400">
             ISO 3166-1 mapped with risk & grid status
           </p>
         </GlassCard>
@@ -160,11 +160,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         <GlassCard className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center space-x-2">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                 <TrendingUp className="w-4 h-4 text-cyan-400" />
                 <span>Hyperscaler CapEx Surge ($B)</span>
               </h3>
-              <p className="text-xs text-slate-400">Annual infrastructure capital deployment (2022 - 2026E)</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Annual infrastructure capital deployment (2022 - 2026E)</p>
             </div>
             <span className="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
               +315% 4-Yr CAGR
@@ -196,11 +196,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         <GlassCard className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center space-x-2">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                 <Zap className="w-4 h-4 text-blue-400" />
                 <span>Regional Data Center Capacity (MW)</span>
               </h3>
-              <p className="text-xs text-slate-400">Total operational and planned MW by continent/region</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Total operational and planned MW by continent/region</p>
             </div>
             <button
               onClick={() => onNavigateToTab('countries')}
@@ -236,9 +236,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         <GlassCard className="p-5 space-y-3">
           <div className="flex items-center space-x-2 text-cyan-400">
             <Flame className="w-4 h-4" />
-            <h4 className="text-sm font-bold text-white">Nuclear & SMR Agreements</h4>
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white">Nuclear & SMR Agreements</h4>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             Hyperscalers contracted 3.4 GW of nuclear power, including Constellation-Microsoft (Three Mile Island), Amazon-Talen (Susquehanna), and Google-Kairos SMRs.
           </p>
           <div className="pt-1 text-[11px] font-mono text-cyan-300 bg-cyan-500/10 px-2.5 py-1 rounded-md inline-block">
@@ -249,9 +249,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         <GlassCard className="p-5 space-y-3">
           <div className="flex items-center space-x-2 text-blue-400">
             <ThermometerSnowflake className="w-4 h-4" />
-            <h4 className="text-sm font-bold text-white">Liquid Cooling Breakthroughs</h4>
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white">Liquid Cooling Breakthroughs</h4>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             NVIDIA GB200 NVL72 racks output 120kW per cabinet, making direct-to-chip cold plate liquid cooling mandatory for PUE sub-1.15 performance.
           </p>
           <div className="pt-1 text-[11px] font-mono text-blue-300 bg-blue-500/10 px-2.5 py-1 rounded-md inline-block">
@@ -262,9 +262,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         <GlassCard className="p-5 space-y-3">
           <div className="flex items-center space-x-2 text-indigo-400">
             <ShieldCheck className="w-4 h-4" />
-            <h4 className="text-sm font-bold text-white">Sovereign AI & Export Controls</h4>
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white">Sovereign AI & Export Controls</h4>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             Over 38 nations established sovereign cloud frameworks and local LLM clusters to safeguard national data while operating under US/EU chip export licenses.
           </p>
           <div className="pt-1 text-[11px] font-mono text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded-md inline-block">

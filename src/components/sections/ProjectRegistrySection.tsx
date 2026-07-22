@@ -7,15 +7,25 @@ import {
 } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
 import { GLOBAL_PROJECTS_REGISTRY } from '../../data/projectsRegistry';
+import { COUNTRY_REGISTRY } from '../../data/countryRegistry';
 
 interface ProjectRegistrySectionProps {
   selectedRegion: string;
   searchQuery: string;
+  onSelectCountry?: (id: string) => void;
 }
+
+// Maps a project's free-text country name to the registry's ISO id, so
+// clicking a project's country stays in sync with the Map / Country Explorer.
+const COUNTRY_NAME_TO_ID: Record<string, string> = COUNTRY_REGISTRY.reduce(
+  (acc, c) => ({ ...acc, [c.name]: c.id }),
+  {} as Record<string, string>
+);
 
 export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
   selectedRegion,
-  searchQuery: externalSearchQuery
+  searchQuery: externalSearchQuery,
+  onSelectCountry
 }) => {
   const [internalQuery, setInternalQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -69,15 +79,15 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-2xl font-extrabold text-white flex items-center space-x-3">
+          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-3">
             <div className="p-2 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20">
               <Database className="w-6 h-6" />
             </div>
             <span>Global Country & Project Registry (17 Columns)</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Structured database mapping project status, MW/GW capacity, SMR power, CapEx value, cooling tech, and confidence levels
           </p>
         </div>
@@ -94,24 +104,24 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
       {/* Filter Controls */}
       <GlassCard className="p-4 flex flex-wrap items-center justify-between gap-4">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400" />
           <input
             type="text"
             placeholder="Search projects by name, company, location..."
             value={internalQuery}
             onChange={(e) => setInternalQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-700/80 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300/80 dark:border-slate-700/80 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           />
         </div>
 
         {/* Category Filter */}
         <div className="flex items-center space-x-2">
-          <Filter className="w-3.5 h-3.5 text-slate-400" />
+          <Filter className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             aria-label="Filter by project category"
-            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+            className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
           >
             <option value="All">All Categories</option>
             <option value="AI Supercomputer">AI Supercomputer</option>
@@ -129,7 +139,7 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             aria-label="Filter by project status"
-            className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
+            className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
           >
             <option value="All">All Statuses</option>
             <option value="Operational">Operational</option>
@@ -141,11 +151,11 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
       </GlassCard>
 
       {/* Structured Table */}
-      <GlassCard className="p-0 overflow-hidden border-slate-800">
+      <GlassCard className="p-0 overflow-hidden border-slate-200 dark:border-slate-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-950 border-b border-slate-800 text-slate-400 font-mono">
+              <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-mono">
                 <th className="py-3 px-4">Region / Country</th>
                 <th className="py-3 px-4">Project & Location</th>
                 <th className="py-3 px-4">Category</th>
@@ -156,27 +166,37 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
                 <th className="py-3 px-4 text-right">Details</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-slate-200/60 dark:divide-slate-800/60 text-slate-800 dark:text-slate-200">
               {filteredProjects.map((p) => {
                 const isExpanded = expandedProjectId === p.id;
                 return (
                   <React.Fragment key={p.id}>
                     <tr className="hover:bg-slate-900/60 transition-colors">
                       <td className="py-3.5 px-4 font-medium">
-                        <span className="text-white font-bold block">{p.country}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">{p.region}</span>
+                        {COUNTRY_NAME_TO_ID[p.country] ? (
+                          <button
+                            type="button"
+                            onClick={() => onSelectCountry?.(COUNTRY_NAME_TO_ID[p.country])}
+                            className="text-slate-900 dark:text-white font-bold block hover:text-cyan-400 transition-colors cursor-pointer text-left"
+                          >
+                            {p.country}
+                          </button>
+                        ) : (
+                          <span className="text-slate-900 dark:text-white font-bold block">{p.country}</span>
+                        )}
+                        <span className="text-[10px] text-slate-600 dark:text-slate-400 font-mono">{p.region}</span>
                       </td>
 
                       <td className="py-3.5 px-4">
                         <span className="font-bold text-cyan-300 block">{p.projectName}</span>
-                        <span className="text-[10px] text-slate-400 block line-clamp-1">{p.location}</span>
-                        <span className="text-[10px] text-slate-500 font-mono block mt-0.5">
+                        <span className="text-[10px] text-slate-600 dark:text-slate-400 block line-clamp-1">{p.location}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-500 font-mono block mt-0.5">
                           Orgs: {p.organizations.join(', ')}
                         </span>
                       </td>
 
                       <td className="py-3.5 px-4 font-mono text-[11px]">
-                        <span className="px-2 py-0.5 rounded bg-slate-900 text-cyan-400 border border-slate-800">
+                        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 text-cyan-400 border border-slate-200 dark:border-slate-800">
                           {p.category}
                         </span>
                       </td>
@@ -191,7 +211,7 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 font-mono font-bold text-white">
+                      <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
                         {p.investmentValue}
                       </td>
 
@@ -210,7 +230,7 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
                       <td className="py-3.5 px-4 text-right">
                         <button
                           onClick={() => setExpandedProjectId(isExpanded ? null : p.id)}
-                          className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] transition-all cursor-pointer"
+                          className="px-3 py-1 rounded bg-slate-200 dark:bg-slate-800 hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] transition-all cursor-pointer"
                         >
                           {isExpanded ? 'Hide' : '17-Cols'}
                         </button>
@@ -219,29 +239,29 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
 
                     {/* Expanded 17-Column Details */}
                     {isExpanded && (
-                      <tr className="bg-slate-950/80">
+                      <tr className="bg-slate-50/80 dark:bg-slate-950/80">
                         <td colSpan={8} className="p-4 space-y-3 text-xs">
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800">
                             <div>
-                              <span className="text-slate-400 font-mono block">Energy & Cooling Approach:</span>
-                              <span className="text-slate-200">{p.energyAndCooling}</span>
+                              <span className="text-slate-600 dark:text-slate-400 font-mono block">Energy & Cooling Approach:</span>
+                              <span className="text-slate-800 dark:text-slate-200">{p.energyAndCooling}</span>
                             </div>
 
                             <div>
-                              <span className="text-slate-400 font-mono block">Jobs Estimate:</span>
-                              <span className="text-slate-200">{p.jobsEstimate}</span>
+                              <span className="text-slate-600 dark:text-slate-400 font-mono block">Jobs Estimate:</span>
+                              <span className="text-slate-800 dark:text-slate-200">{p.jobsEstimate}</span>
                             </div>
 
                             <div>
-                              <span className="text-slate-400 font-mono block">Timeline:</span>
-                              <span className="text-slate-200">Announced: {p.announcedDate} | Expected: {p.expectedCompletion}</span>
+                              <span className="text-slate-600 dark:text-slate-400 font-mono block">Timeline:</span>
+                              <span className="text-slate-800 dark:text-slate-200">Announced: {p.announcedDate} | Expected: {p.expectedCompletion}</span>
                             </div>
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
                               <span className="font-bold text-emerald-400 block mb-1">Key Evidence-Supported Benefits:</span>
-                              <ul className="list-disc list-inside space-y-0.5 text-slate-300">
+                              <ul className="list-disc list-inside space-y-0.5 text-slate-700 dark:text-slate-300">
                                 {p.keyBenefits.map((b, i) => (
                                   <li key={i}>{b}</li>
                                 ))}
@@ -250,7 +270,7 @@ export const ProjectRegistrySection: React.FC<ProjectRegistrySectionProps> = ({
 
                             <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
                               <span className="font-bold text-amber-400 block mb-1">Material Risks & Grid Bottlenecks:</span>
-                              <ul className="list-disc list-inside space-y-0.5 text-slate-300">
+                              <ul className="list-disc list-inside space-y-0.5 text-slate-700 dark:text-slate-300">
                                 {p.keyRisks.map((r, i) => (
                                   <li key={i}>{r}</li>
                                 ))}

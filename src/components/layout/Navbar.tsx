@@ -12,6 +12,8 @@ import {
   ChevronDown,
   MapPin
 } from 'lucide-react';
+import { ThemeToggle } from '../ui/ThemeToggle';
+import type { ThemeMode } from '@/hooks/useTheme';
 
 interface NavbarProps {
   activeTab: string;
@@ -20,6 +22,8 @@ interface NavbarProps {
   setSelectedRegion: (region: string) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  themeMode: ThemeMode;
+  setThemeMode: (mode: ThemeMode) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -28,7 +32,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   selectedRegion,
   setSelectedRegion,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  themeMode,
+  setThemeMode
 }) => {
   const regions = [
     'All Regions',
@@ -55,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-xl bg-slate-950/80 border-b border-slate-800/80 text-slate-100 shadow-2xl">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-slate-50/80 dark:bg-slate-950/80 border-b border-slate-200/80 dark:border-slate-800/80 text-slate-900 dark:text-slate-100 shadow-2xl">
       {/* Top Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
         
@@ -66,14 +72,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-cyan-400">
+              <span className="font-bold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-700 to-cyan-600 dark:from-white dark:via-slate-200 dark:to-cyan-400">
                 AETHEL GLOBAL
               </span>
-              <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 tracking-wider">
+              <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-700 dark:text-cyan-400 border border-cyan-500/30 tracking-wider">
                 2026 Horizon
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-slate-600 dark:text-slate-400 font-mono">
               AI, Cloud, Data Center & Digital Infrastructure Intelligence
             </p>
           </div>
@@ -83,13 +89,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center space-x-3 flex-1 max-w-md">
           {/* Search bar */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400" />
             <input
               type="text"
               placeholder="Search 249 countries, projects, GPUs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-1.5 bg-slate-900/90 border border-slate-700/60 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all"
+              className="w-full pl-9 pr-4 py-1.5 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300/60 dark:border-slate-700/60 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 transition-all"
             />
           </div>
 
@@ -99,21 +105,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
               aria-label="Filter by region"
-              className="appearance-none bg-slate-900/90 border border-slate-700/60 rounded-xl px-3 py-1.5 pr-8 text-xs text-cyan-300 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 cursor-pointer"
+              className="appearance-none bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300/60 dark:border-slate-700/60 rounded-xl px-3 py-1.5 pr-8 text-xs text-cyan-700 dark:text-cyan-300 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500/50 cursor-pointer"
             >
               {regions.map((reg) => (
-                <option key={reg} value={reg} className="bg-slate-900 text-slate-200">
+                <option key={reg} value={reg} className="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
                   {reg}
                 </option>
               ))}
             </select>
             <ChevronDown className="w-3.5 h-3.5 absolute right-2.5 top-1/2 -translate-y-1/2 text-cyan-400 pointer-events-none" />
           </div>
+
+          {/* Theme Toggle */}
+          <ThemeToggle mode={themeMode} setMode={setThemeMode} />
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200/40 dark:border-slate-800/40">
         <nav className="flex space-x-1 overflow-x-auto py-2 scrollbar-none" aria-label="Main Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -124,11 +133,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab(item.id)}
                 className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-300 border border-cyan-500/40 shadow-inner'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+                    ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-inner'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-900/60'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-600 dark:text-slate-400'}`} />
                 <span>{item.label}</span>
               </button>
             );
