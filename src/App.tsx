@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from './hooks/useTheme';
+import { PoweredByBar } from './components/layout/PoweredByBar';
 import { Navbar } from './components/layout/Navbar';
 import { ExecutiveDashboard } from './components/sections/ExecutiveDashboard';
 import { DeepResearchEngine } from './components/sections/DeepResearchEngine';
@@ -20,6 +21,9 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 flex flex-col">
+      {/* Powered By Bar (top) */}
+      <PoweredByBar />
+
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}

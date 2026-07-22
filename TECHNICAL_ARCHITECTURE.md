@@ -133,6 +133,10 @@ The app now ships a real three-way theme switcher rather than a fixed dark palet
 - **Regression safeguard:** when no preference is stored, the resolved theme defaults to **`dark`** — the app's original fixed appearance — so existing users see zero visual change until they explicitly pick Light or System.
 - **Coverage:** every component actually rendered by the app (the app shell, `Navbar`, `Footer`, `GlassCard`, `CountryModal`, `ExecutiveDashboard`, `DeepResearchEngine`, `InfrastructureMap`, `CountryExplorer`, `ProjectRegistrySection`, `PowerCoolingSection`, `AuditLogSection`, `ExportSuite`) has paired light/dark Tailwind classes for backgrounds, borders, and text. A handful of unused/orphaned components under `src/components/sections/` (`HeroHeader`, `RegulatorySection`, `SustainabilitySection`, `AgenticSection`, `TrilemmaSection`, `ExecutiveSummary`, `InfrastructureSection`) are not imported anywhere in `App.tsx` and were left as-is — see §12 for a note on this dead code.
 
+### 6.2 "Powered By DocypherLabs" Bar
+
+`src/components/layout/PoweredByBar.tsx` is a slim, theme-independent (always dark navy, matching a fixed brand strip rather than the page theme) attribution bar rendered twice: once at the very top of the app (`App.tsx`, above the `Navbar`) and once at the very bottom (inside `Footer.tsx`, below the existing footer content). The full phrase **"DocypherLabs | Research & Intelligence"** is wrapped in a single `<a href="https://docypherlabs.com/" target="_blank" rel="noopener noreferrer">`, with `DocypherLabs` styled in amber and the rest in muted slate — consistent with the reference DocypherLabs branding bar this was modeled on. `rel="noopener noreferrer"` is used because the link opens in a new tab, preventing the new page from getting a handle back to `window.opener`.
+
 ---
 
 ## 7. AI Model Integration
@@ -200,6 +204,25 @@ A **"3D Immersive" / "2D View"** toggle lives next to the overlay-mode buttons. 
 - Everything is wrapped in `try/catch` and defaults to **off** (2D) on first load, so the original map experience is unchanged unless a user opts in — the regression safeguard requested for this feature.
 
 **Not included (future extension):** choropleth country-shape fills (would need a TopoJSON world layer + `react-simple-maps`/`visx`), animated pulsing hotspots, or per-region camera presets — present in the reference DocypherLabs map implementations reviewed but out of scope for this pass.
+
+### 9.3 Map View Selector (Standard / Satellite / Terrain / Hybrid / Dark / Light)
+
+A basemap-style switcher sits bottom-right on the map (`src/components/map/MapViewSelector.tsx`), styled as an upward-opening dropdown card above a pill-shaped trigger button, with a checkmark on the active option. Six views are defined in `src/components/map/mapStyles.ts`, all from free, tokenless tile sources:
+
+| View | Source | Type |
+|---|---|---|
+| Standard | OpenFreeMap "Liberty" | vector (supports 3D buildings) |
+| Light | OpenFreeMap "Positron" | vector (supports 3D buildings) |
+| Dark | CARTO `dark_all` | raster |
+| Satellite | Esri World Imagery | raster |
+| Terrain | OpenTopoMap | raster |
+| Hybrid | Esri World Imagery + Esri World Boundaries & Places (labels) | two stacked raster layers |
+
+**Mechanics:** switching views calls `map.setStyle(...)` with either a style URL (vector) or a hand-built `StyleSpecification` object (raster, via a small `rasterStyle()`/`hybridStyle()` helper in `mapStyles.ts`). Markers are DOM overlays independent of the MapLibre style, so they — along with the current camera position and any active country selection/highlight — survive every style swap untouched. If 3D Immersive is on and the newly-selected view supports building extrusion, the `3d-buildings` layer is re-added once the new style finishes loading (`map.once('styledata', ...)`); raster views simply keep the tilted camera without extrusion, since raster tiles have no vector building layer to extrude.
+
+**Bug fixed during implementation:** the effect switching styles guarded against re-running on initial mount with an `isFirstStyleRender` ref, but the guard was only consumed once `mapReady` became true — and because the effect's dependency array didn't include `mapReady`, the effect never re-ran when the map finished loading, so the ref stayed `true` and silently no-op'd the *first* real view change a user made. Fixed by adding `mapReady` to the dependency array (`[mapViewId, mapReady]`), so the initial run (mount, `mapReady` false → early return) and the "consume the guard" run (once `mapReady` flips true) are properly separated from subsequent user-driven `mapViewId` changes.
+
+**Also hardened while investigating:** the map's global `error` handler previously set `mapFailed = true` (replacing the entire map with a fallback message) on *any* MapLibre `error` event, including a single failed tile request — common at world edges or on a transient network blip, and fully recoverable. It now only does so if the style has never finished its initial load (`!map.isStyleLoaded()`), so one bad tile can no longer take down an otherwise-working map for the rest of the session.
 
 ---
 

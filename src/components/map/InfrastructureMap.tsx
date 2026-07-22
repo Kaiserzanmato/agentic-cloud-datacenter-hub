@@ -7,9 +7,9 @@ import { COUNTRY_REGISTRY, type CountryRegistryItem } from '../../data/countryRe
 import { COUNTRY_COORDINATES } from '../../data/countryCoordinates';
 import { CountryModal } from '../ui/CountryModal';
 import { STATUS_COLORS, capacityToRadius } from './statusStyle';
+import { MAP_VIEW_OPTIONS, DEFAULT_MAP_VIEW, type MapViewId } from './mapStyles';
+import { MapViewSelector } from './MapViewSelector';
 
-// Free, tokenless vector tile style — no API key required.
-const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 const BUILDINGS_LAYER_ID = '3d-buildings';
 const BUILDINGS_SOURCE_ID = 'openmaptiles';
 
@@ -34,6 +34,8 @@ export const InfrastructureMap: React.FC<InfrastructureMapProps> = ({
   const [selectedCountry, setSelectedCountry] = useState<CountryRegistryItem | null>(null);
   const [overlayMode, setOverlayMode] = useState<'status' | 'capacity'>('status');
   const [is3D, setIs3D] = useState(false);
+  const [mapViewId, setMapViewId] = useState<MapViewId>(DEFAULT_MAP_VIEW);
+  const isFirstStyleRender = useRef(true);
 
   const filteredCountries = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
@@ -54,9 +56,10 @@ export const InfrastructureMap: React.FC<InfrastructureMapProps> = ({
 
     let map: maplibregl.Map;
     try {
+      const initialStyle = MAP_VIEW_OPTIONS.find((o) => o.id === DEFAULT_MAP_VIEW)?.style;
       map = new maplibregl.Map({
         container: containerRef.current,
-        style: MAP_STYLE_URL,
+        style: initialStyle ?? MAP_VIEW_OPTIONS[0].style,
         center: [30, 20],
         zoom: 1.4,
         pitch: 0,
@@ -65,7 +68,15 @@ export const InfrastructureMap: React.FC<InfrastructureMapProps> = ({
 
       map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
       map.on('load', () => setMapReady(true));
-      map.on('error', () => setMapFailed(true));
+      // A single failed tile request (common at world edges / transient network
+      // blips) fires the same 'error' event as a fatal style-load failure — only
+      // treat it as fatal if the map never finished its initial load, so a
+      // recoverable tile error can't permanently hide an otherwise-working map.
+      map.on('error', () => {
+        if (!mapRef.current?.isStyleLoaded()) {
+          setMapFailed(true);
+        }
+      });
 
       mapRef.current = map;
     } catch {
@@ -192,6 +203,51 @@ export const InfrastructureMap: React.FC<InfrastructureMapProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCountryId, mapReady]);
+
+  // Switch the underlying tile style (Standard/Satellite/Terrain/Hybrid/Dark/
+  // Light) via map.setStyle(). Markers are DOM overlays independent of the
+  // style, so they and the current camera position survive the swap
+  // untouched — only the 3D buildings layer needs to be re-added afterwards,
+  // and only for styles that expose the required vector source-layer.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+    if (isFirstStyleRender.current) {
+      isFirstStyleRender.current = false;
+      return;
+    }
+
+    const option = MAP_VIEW_OPTIONS.find((o) => o.id === mapViewId);
+    if (!option) return;
+
+    try {
+      map.setStyle(option.style as maplibregl.StyleSpecification | string);
+      map.once('styledata', () => {
+        try {
+          if (is3D && option.supports3DBuildings && !map.getLayer(BUILDINGS_LAYER_ID) && map.getSource(BUILDINGS_SOURCE_ID)) {
+            map.addLayer({
+              id: BUILDINGS_LAYER_ID,
+              source: BUILDINGS_SOURCE_ID,
+              'source-layer': 'building',
+              type: 'fill-extrusion',
+              minzoom: 13,
+              paint: {
+                'fill-extrusion-color': '#94a3b8',
+                'fill-extrusion-height': ['coalesce', ['get', 'render_height'], 8],
+                'fill-extrusion-base': ['coalesce', ['get', 'render_min_height'], 0],
+                'fill-extrusion-opacity': 0.65,
+              },
+            });
+          }
+        } catch {
+          // Rebuilding the 3D layer after a style swap is best-effort.
+        }
+      });
+    } catch {
+      // Style switching is best-effort — the map keeps its previous style on failure.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapViewId, mapReady]);
 
   // Toggle the open-source 3D immersive view. This reuses the exact same map
   // instance and marker set as the 2D overlay (no separate map/data source),
@@ -326,11 +382,16 @@ export const InfrastructureMap: React.FC<InfrastructureMapProps> = ({
             3D buildings render when zoomed into a city (zoom 13+)
           </div>
         )}
+
+        {/* Map view / basemap style selector */}
+        {!mapFailed && (
+          <MapViewSelector value={mapViewId} onChange={setMapViewId} className="absolute bottom-3 right-3 z-20" />
+        )}
       </div>
 
       <p className="text-[10px] text-slate-500 dark:text-slate-500 font-mono">
-        Map tiles © OpenFreeMap, © OpenMapTiles, © OpenStreetMap contributors. Markers reflect curated registry
-        data, not live telemetry.
+        Map tiles © OpenFreeMap / OpenMapTiles / OpenStreetMap contributors, © CARTO, © Esri, © OpenTopoMap
+        depending on the selected view. Markers reflect curated registry data, not live telemetry.
       </p>
 
       <CountryModal country={selectedCountry} onClose={() => setSelectedCountry(null)} />
