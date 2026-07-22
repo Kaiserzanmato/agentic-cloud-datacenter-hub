@@ -11,6 +11,7 @@ import { PowerCoolingSection } from './components/sections/PowerCoolingSection';
 import { AuditLogSection } from './components/sections/AuditLogSection';
 import { ExportSuite } from './components/sections/ExportSuite';
 import { Footer } from './components/sections/Footer';
+import { AIResearchAgent } from './components/agent/AIResearchAgent';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -81,6 +82,11 @@ export function App() {
 
       {/* Footer */}
       <Footer />
+
+      <AIResearchAgent
+        activeTab={activeTab}
+        selectedRegion={selectedRegion}
+      />
     </div>
   );
 }
