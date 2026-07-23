@@ -129,15 +129,17 @@ export function AIResearchAgent({ activeTab, selectedRegion }: AIResearchAgentPr
           <p className="mt-1 truncate text-xs font-medium text-cyan-300">Context: {contextLabel}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            onClick={clearChat}
-            aria-label="Clear chat"
-            title="Clear chat"
-            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          >
-            <Eraser className="h-5 w-5" />
-          </button>
+          {hasRealConversation && (
+            <button
+              type="button"
+              onClick={clearChat}
+              aria-label="Clear chat"
+              title="Clear chat"
+              className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              <Eraser className="h-5 w-5" />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setIsOpen(false)}

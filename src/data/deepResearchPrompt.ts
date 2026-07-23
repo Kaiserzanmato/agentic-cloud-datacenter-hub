@@ -57,5 +57,11 @@ export const PRESET_RESEARCH_QUERIES: ResearchPromptTemplate[] = [
     title: 'Global 2nm Semiconductor Supply Chain & Export Controls',
     category: 'Semiconductors',
     promptText: 'Compare TSMC Arizona, Rapidus Japan, and Samsung Foundry progress on 2nm GAAFET nodes alongside US/EU export restrictions and critical mineral supply chains.'
+  },
+  {
+    id: 'preset-05',
+    title: 'Pax Silica: Global AI Supply Chain & Strategic Hubs',
+    category: 'Geopolitics & Supply Chain',
+    promptText: 'Evaluate the Pax Silica framework impact on global AI supply chains, focusing on the $10B Project Vault, the 1,620ha New Clark City Hub, and the 24-country coalition alignment as of July 2026.'
   }
 ];

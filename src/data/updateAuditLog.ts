@@ -55,5 +55,13 @@ export const ATTACHED_REPORT_UPDATE_LOG: AuditLogEntry[] = [
     changeType: 'Updated',
     reason: 'Thermal dissipation limits of air cooling exceeded by next-gen GPUs (1000W+ per package).',
     supportingSources: ['Uptime Institute Global Data Center Survey 2026', 'Vertiv Tech Brief']
+  },
+  {
+    id: 'log-007',
+    originalClaim: 'Minerals Security Partnership (MSP) serves as the primary critical mineral coordination forum.',
+    updatedFinding: 'Pax Silica framework launched (Dec 2025) and FORGE forum established as successor/expansion; $10.25B public funding approved.',
+    changeType: 'Expanded',
+    reason: 'Formalization of the Pax Silica multilateral declaration with 24 formal signatories and flagship hubs in PH, Panama, and US.',
+    supportingSources: ['US Dept of State Pax Silica Declaration', 'Reuters April 2026', 'EU Commission Press Release June 2026']
   }
 ];

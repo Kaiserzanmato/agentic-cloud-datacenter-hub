@@ -111,6 +111,13 @@ export const globalMetrics: Metric[] = [
     icon: 'building',
   },
   {
+    label: 'Pax Silica Commitments',
+    value: '$10.25B',
+    change: '24 Signatories',
+    trend: 'up',
+    icon: 'globe',
+  },
+  {
     label: 'Liquid Cooling CAGR',
     value: '28.7–52%',
     change: '1,129% growth by 2030',
@@ -142,6 +149,16 @@ export const capExData: CapExItem[] = [
     investment: 'Multiple billions',
     details: 'Targeting 1,000x compute capacity growth by 2029, doubling serving power every six months',
   },
+  {
+    initiative: 'Pax Silica / Project Vault',
+    investment: '$10B EXIM + $250M Seed',
+    details: 'US-led framework to secure AI supply chain; Project Vault stockpiles critical minerals; 24 signatory countries as of July 2026',
+  },
+  {
+    initiative: 'Luzon Economic Corridor',
+    investment: '$2.5B (Phase 1)',
+    details: 'New Clark City anchor hub (1,620 ha); focus on semiconductor ATP, PCBs, and trusted logistics; 2-year bilateral negotiation frame',
+  },
 ];
 
 export const hyperscalerCapExTotal = '$602B';
@@ -165,6 +182,8 @@ export const waterMetrics: WaterMetric[] = [
   { metric: 'Microsoft projected (2030)', figure: '~18B liters (+150%)', source: 'NYT' },
   { metric: 'Google per-facility average', figure: '550K gallons/day', source: 'GRESB' },
   { metric: '1 MW DC annual cooling water', figure: 'Up to 25.5M liters', source: 'CloudComputing News' },
+  { metric: 'New Clark City ATP demand', figure: '2.5–5.0M liters/day', source: 'Pax Silica Report' },
+  { metric: 'Sacobia Watershed risk', figure: 'Critical industrial strain', source: 'Pax Silica Report' },
 ];
 
 // ─── Nuclear Deals ───────────────────────────────────────────────────────────
