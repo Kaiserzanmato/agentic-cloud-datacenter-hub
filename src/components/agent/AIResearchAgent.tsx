@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Bot, Loader2, RotateCcw, Send, X } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { Bot, Loader2, Brush, Send, X } from 'lucide-react';
 
 interface AIResearchAgentProps {
   activeTab: string;
@@ -45,6 +45,11 @@ export function AIResearchAgent({ activeTab, selectedRegion }: AIResearchAgentPr
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    console.log('AIResearchAgent mounted - resetting input state');
+    setQuestion('');
+  }, []);
 
   const contextLabel = useMemo(
     () => `${selectedRegion} • ${activeTab}`,
@@ -135,15 +140,17 @@ export function AIResearchAgent({ activeTab, selectedRegion }: AIResearchAgentPr
           <p className="mt-1 truncate text-xs font-medium text-cyan-300">Context: {contextLabel}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            onClick={clearChat}
-            aria-label="Clear chat"
-            title="Clear chat"
-            className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          >
-            <RotateCcw className="h-5 w-5" />
-          </button>
+          {messages.length > 1 && (
+            <button
+              type="button"
+              onClick={clearChat}
+              aria-label="Clear chat"
+              title="Clear chat"
+              className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              <Brush className="h-5 w-5" />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setIsOpen(false)}
