@@ -41,7 +41,7 @@ const initialMessages: AgentMessage[] = [
 
 export function AIResearchAgent({ activeTab, selectedRegion }: AIResearchAgentProps) {
   const [isOpen, setIsOpen] = useState(true);
-  const [question, setQuestion] = useState(starterQuestion);
+  const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<AgentMessage[]>(initialMessages);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +53,7 @@ export function AIResearchAgent({ activeTab, selectedRegion }: AIResearchAgentPr
 
   const clearChat = () => {
     setMessages(initialMessages);
-    setQuestion(starterQuestion);
+    setQuestion('');
     setError(null);
   };
 
